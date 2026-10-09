@@ -75,6 +75,8 @@ public class AnimatedList : Gtk.Widget, Gtk.Scrollable {
     public AnimatedListDirection direction { get; construct set; }
     /** Scroll to the latest item added to the list */
     public bool scroll_to_append { get; construct set; }
+    /** Whether new items should fade in/out while animating */
+    public bool animation_child_fade { get; set; default = true; }
     /** The default item reveal animation type */
     public AnimatedListItem.RevealAnimationType animation_add_reveal_type {
         get;
@@ -568,7 +570,7 @@ public class AnimatedList : Gtk.Widget, Gtk.Scrollable {
             item.animation_add_child_type = animation_add_child_type;
             item.animation_remove_reveal_type = animation_remove_reveal_type;
             item.animation_remove_child_type = animation_remove_child_type;
-            item.animation_child_fade = true;
+            item.animation_child_fade = animation_child_fade;
 
             widget.unparent ();
             widget.set_parent (item);

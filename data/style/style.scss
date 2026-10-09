@@ -371,6 +371,15 @@ notificationwindow, blankwindow {
   }
 }
 
+/* Compositor-side background blur (ext-background-effect-v1), toggled by the background-blur config option */
+notificationwindow.background-blur .notification-background .notification {
+  backdrop-filter: blur(24px);
+}
+
+.background-blur .control-center {
+  backdrop-filter: blur(24px);
+}
+
 /*** Widgets ***/
 .widget {
   margin: $margin;

@@ -40,6 +40,18 @@ config file to be able to detect config errors
 	description: Wether or not the windows should be opened as layer-shell ++
 		surfaces. Note: Requires swaync restart to apply
 
+*background-blur* ++
+	type: bool ++
+	default: false ++
+	description: Enables compositor-side background blur behind the ++
+		notification window and the control center. The blur region tracks ++
+		each rounded notification card / the control center rectangle, not ++
+		the whole layer-shell surface. Requires a compositor implementing ++
+		the *ext-background-effect-v1* Wayland protocol and swaync running ++
+		with GTK >= 4.23.3. Otherwise nothing is blurred. Enabling it also ++
+		replaces the fade animations of popup notifications (including ++
+		swiping) with slide only animations. See *BACKGROUND BLUR* below.
+
 *cssPriority* ++
 	type: string ++
 	default: application ++
@@ -863,6 +875,51 @@ config file to be able to detect config errors
 	}
 }
 ```
+
+# BACKGROUND BLUR
+
+When *background-blur* is enabled swaync adds the *.background-blur* style
+class to the notification window and the control center. The bundled
+stylesheet then applies *backdrop-filter: blur(24px)* to the notification
+cards and to the control center.
+
+GTK (>= 4.23.3) forwards any *backdrop-filter* blur of 10px or more to the
+compositor as a shaped blur region (the widget's rounded border box) via the
+*ext-background-effect-v1* Wayland protocol. The compositor then blurs exactly
+that region behind the surface, instead of the whole layer-shell surface. On
+an older GTK, or without a compositor implementing the protocol, nothing is
+blurred.
+
+GTK only computes the region when no ancestor of the blurred widget isolates
+its background (e.g. an *opacity* below 1). For this reason, popup
+notifications slide in, out and when swiped without fading while
+*background-blur* is enabled. The blur is still absent on notifications faded
+out by the stacking effect of an overflowing popup list.
+
+The *backdrop-filter* value does not control the blur strength. The protocol
+only carries the region, so the value acts as a switch: *10px or larger*
+requests compositor blur, anything smaller does not. The blur strength is set
+in the compositor's own configuration.
+
+To blur only one of the two, disable it for the other in your *style.css*:
+
+```
+/* Blur the control center, but not the popup notifications */
+notificationwindow.background-blur .notification-background .notification {
+	backdrop-filter: none;
+}
+```
+
+If your compositor also applies its own blur to swaync's layer surfaces (for
+example through a per-surface or layer rule matching the
+*swaync-notification-window* or *swaync-control-center* namespaces), disable
+it. Such a rule blurs the whole surface, including margins and empty space,
+instead of only the notifications and the control center.
+
+Whether the compositor blurs anything with this enabled, and whether it needs
+any configuration of its own, depends on its *ext-background-effect-v1*
+support. Consult its documentation.
+
 #START scripting
 
 # Scripts

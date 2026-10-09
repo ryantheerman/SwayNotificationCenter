@@ -544,6 +544,13 @@ namespace SwayNotificationCenter {
          */
         public bool layer_shell_cover_screen { get; set; default = true; }
 
+        /**
+         * Enables compositor-side background blur behind the notification
+         * window and the control center. Requires GTK >= 4.23.3 and a
+         * compositor supporting ext-background-effect-v1.
+         */
+        public bool background_blur { get; set; default = false; }
+
         /** The CSS loading priority */
         public CssPriority cssPriority { // vala-lint=naming-convention
             get; set; default = CssPriority.USER;

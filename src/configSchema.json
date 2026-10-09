@@ -35,6 +35,11 @@
       "description": "Whether or not the windows should cover the whole screen when layer-shell is used. May exceed the height of the monitor if the value is too large. Fixes animations in compositors like Hyprland.",
       "default": true
     },
+    "background-blur": {
+      "type": "boolean",
+      "description": "Enables compositor-side background blur behind the notifications and control center. Requires a compositor implementing ext-background-effect-v1 and swaync running with GTK >= 4.23.3, otherwise nothing is blurred. Also replaces the fade animations of popup notifications (including swiping) with slide only animations. Blur strength is set by the compositor, not the CSS value; disable any compositor-side blur rule for the swaync layer surfaces. See the BACKGROUND BLUR section of swaync(5).",
+      "default": false
+    },
     "cssPriority": {
       "type": "string",
       "description": "Which GTK priority to use when loading the default and user CSS files. Pick \"user\" to override XDG_CONFIG_HOME/gtk-4.0/gtk.css",

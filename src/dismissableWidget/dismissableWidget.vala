@@ -42,6 +42,9 @@ public class DismissibleWidget : Gtk.Widget, Adw.Swipeable {
         }
     }
 
+    /** Whether the child should fade out while being swiped */
+    public bool fade_on_swipe { get; set; default = true; }
+
     SwipeDirection swipe_direction = SwipeDirection.SWIPE_RIGHT;
 
     construct {
@@ -128,6 +131,14 @@ public class DismissibleWidget : Gtk.Widget, Adw.Swipeable {
     }
 
     protected override void snapshot (Gtk.Snapshot snapshot) {
+        // Only push an opacity node while swiping. Opacity nodes isolate the
+        // background, which prevents GTK from computing a compositor blur
+        // region for descendants using backdrop-filter.
+        if (!fade_on_swipe || swipe_progress == 0) {
+            snapshot_child (child, snapshot);
+            return;
+        }
+
         snapshot.push_opacity (1 - swipe_progress.abs ());
         snapshot_child (child, snapshot);
         snapshot.pop ();

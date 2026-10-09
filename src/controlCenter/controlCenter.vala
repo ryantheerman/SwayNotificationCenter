@@ -122,8 +122,12 @@ namespace SwayNotificationCenter {
 
             add_widgets ();
 
+            update_background_blur ();
+
             // Change output on config reload
             app.config_reload.connect ((old, config) => {
+                update_background_blur ();
+
                 string monitor_name = config.control_center_preferred_output;
                 if (old == null
                     || old.control_center_preferred_output != monitor_name
@@ -132,6 +136,15 @@ namespace SwayNotificationCenter {
                     set_anchor ();
                 }
             });
+        }
+
+        /** Toggles the `background-blur` style class used by the stylesheet */
+        private void update_background_blur () {
+            if (ConfigModel.instance.background_blur) {
+                add_css_class ("background-blur");
+            } else {
+                remove_css_class ("background-blur");
+            }
         }
 
         private void key_released_event_cb (uint keyval, uint keycode, Gdk.ModifierType state) {

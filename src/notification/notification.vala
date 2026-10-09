@@ -275,6 +275,7 @@ namespace SwayNotificationCenter {
             close_button.set_transition_duration (this.transition_time);
 
             this.revealer.set_transition_duration (this.transition_time);
+            update_background_blur ();
 
             // Changes the swipe direction depending on the notifications X position
             switch (ConfigModel.instance.positionX) {
@@ -658,6 +659,20 @@ namespace SwayNotificationCenter {
                 dismissed = true;
                 noti_daemon.request_dismiss_notification (param, reason);
             }
+        }
+
+        /** Disables fading for floating notifications when blurring */
+        public void update_background_blur () {
+            // Fading pushes an opacity node which prevents GTK from
+            // computing a compositor blur region while animating or swiping
+            bool blur = notification_type == NotificationType.FLOATING
+                && ConfigModel.instance.background_blur;
+            if (blur) {
+                this.revealer.set_transition_type (Gtk.RevealerTransitionType.NONE);
+            } else {
+                this.revealer.set_transition_type (Gtk.RevealerTransitionType.CROSSFADE);
+            }
+            dismissible_widget.fade_on_swipe = !blur;
         }
 
         // TODO: Inherit AnimatedListItem instead

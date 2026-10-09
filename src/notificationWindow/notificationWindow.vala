@@ -58,8 +58,12 @@ namespace SwayNotificationCenter {
             // set_resizable (false);
             default_width = ConfigModel.instance.notification_window_width;
 
+            update_background_blur ();
+
             // Change output on config reload
             app.config_reload.connect ((old, config) => {
+                update_background_blur ();
+
                 string monitor_name = config.notification_window_preferred_output;
                 if (old == null
                     || old.notification_window_preferred_output != monitor_name
@@ -75,6 +79,31 @@ namespace SwayNotificationCenter {
 
             // Set the input region to only be the size of the ScrolledWindow
             set_input_region ();
+        }
+
+        /** Toggles the `background-blur` style class used by the stylesheet */
+        private void update_background_blur () {
+            bool blur = ConfigModel.instance.background_blur;
+            if (blur) {
+                add_css_class ("background-blur");
+            } else {
+                remove_css_class ("background-blur");
+            }
+            // Opacity nodes isolate the background, which prevents GTK from
+            // computing a compositor blur region, so only slide when blurring
+            list.animation_child_fade = !blur;
+
+            // Also update the notifications that are already visible
+            foreach (unowned AnimatedListItem item in list.children) {
+                if (item.destroying) {
+                    continue;
+                }
+                item.animation_child_fade = !blur;
+                unowned Notification ?notification = item.child as Notification;
+                if (notification != null) {
+                    notification.update_background_blur ();
+                }
+            }
         }
 
         protected override void snapshot (Gtk.Snapshot snapshot) {
