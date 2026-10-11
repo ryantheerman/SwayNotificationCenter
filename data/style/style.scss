@@ -371,6 +371,12 @@ notificationwindow, blankwindow {
   }
 }
 
+/* Compositor-side background blur (ext-background-effect-v1, GTK >= 4.23.3) */
+notificationwindow .notification-background .notification,
+.control-center {
+  backdrop-filter: blur(24px);
+}
+
 /*** Widgets ***/
 .widget {
   margin: $margin;
