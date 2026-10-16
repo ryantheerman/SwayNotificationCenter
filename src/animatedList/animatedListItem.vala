@@ -172,13 +172,17 @@ public class AnimatedListItem : Gtk.Widget {
             return;
         }
 
-        if (animation_child_fade) {
+        // Only push an opacity node while fading. Opacity nodes isolate the
+        // background, which prevents GTK from computing a compositor blur
+        // region for descendants using backdrop-filter.
+        bool fade = animation_child_fade && animation_value < 1.0;
+        if (fade) {
             snapshot.push_opacity (animation_value);
         }
 
         snapshot_child (child, snapshot);
 
-        if (animation_child_fade) {
+        if (fade) {
             snapshot.pop ();
         }
     }

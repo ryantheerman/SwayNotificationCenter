@@ -128,6 +128,14 @@ public class DismissibleWidget : Gtk.Widget, Adw.Swipeable {
     }
 
     protected override void snapshot (Gtk.Snapshot snapshot) {
+        // Only push an opacity node while swiping. Opacity nodes isolate the
+        // background, which prevents GTK from computing a compositor blur
+        // region for descendants using backdrop-filter.
+        if (swipe_progress == 0) {
+            snapshot_child (child, snapshot);
+            return;
+        }
+
         snapshot.push_opacity (1 - swipe_progress.abs ());
         snapshot_child (child, snapshot);
         snapshot.pop ();
