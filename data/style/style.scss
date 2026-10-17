@@ -333,6 +333,9 @@ notificationwindow, blankwindow {
   background: var(--cc-bg);
   color: var(--text-color);
   border-radius: var(--border-radius);
+  /* Compositor background blur (requires GTK >= 4.24 and compositor support).
+   * Must be >= 10px to take effect; the compositor decides the actual strength.
+   * backdrop-filter: blur(10px); */
 
   .control-center-list-placeholder {
     /* The placeholder when there are no notifications */
@@ -368,6 +371,9 @@ notificationwindow, blankwindow {
 
   .notification {
     box-shadow: none;
+    /* Compositor background blur (requires GTK >= 4.24 and compositor support).
+     * Must be >= 10px to take effect; the compositor decides the actual strength.
+     * backdrop-filter: blur(10px); */
   }
 }
 
