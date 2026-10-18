@@ -42,6 +42,10 @@ public class DismissibleWidget : Gtk.Widget, Adw.Swipeable {
         }
     }
 
+    // Disable to fade elsewhere, e.g. on a widget using CSS backdrop-filter,
+    // whose compositor blur region an ancestor opacity node would remove
+    public bool fade_child { get; set; default = true; }
+
     SwipeDirection swipe_direction = SwipeDirection.SWIPE_RIGHT;
 
     construct {
@@ -131,7 +135,7 @@ public class DismissibleWidget : Gtk.Widget, Adw.Swipeable {
         // Only push an opacity node while swiping. An opacity node (even at
         // 1.0) isolates the background, which prevents CSS backdrop-filter
         // from producing a compositor blur region for the child.
-        bool fade = swipe_progress != 0;
+        bool fade = fade_child && swipe_progress != 0;
         if (fade) {
             snapshot.push_opacity (1 - swipe_progress.abs ());
         }

@@ -239,6 +239,15 @@ namespace SwayNotificationCenter {
                 request_dismiss_notification (ClosedReasons.DISMISSED, true);
             });
 
+            // Fade the card rather than the DismissibleWidget so that a CSS
+            // backdrop-filter on .notification keeps its blur region while swiping
+            dismissible_widget.fade_child = false;
+            dismissible_widget.notify["swipe-progress"].connect (() => {
+                double opacity = 1 - dismissible_widget.swipe_progress.abs ();
+                base_box.set_opacity (opacity);
+                close_button.set_opacity (opacity);
+            });
+
             Gtk.EventControllerKey reply_key_controller = new Gtk.EventControllerKey ();
             reply_key_controller.key_released.connect ((keyval, keycode, state) => {
                 if (Gdk.keyval_name (keyval) == "Return") {
