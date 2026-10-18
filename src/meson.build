@@ -69,6 +69,7 @@ app_sources = [
   'notiModel/notiModel.vala',
   'notificationWindow/notificationWindow.vala',
   'dismissableWidget/dismissableWidget.vala',
+  'fadeable/fadeable.vala',
   'notification/notification.vala',
   'notificationCloseButton/notificationCloseButton.vala',
   'notificationGroup/notificationGroup.vala',

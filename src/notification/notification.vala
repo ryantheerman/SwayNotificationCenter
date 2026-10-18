@@ -2,9 +2,7 @@ namespace SwayNotificationCenter {
     public enum NotificationType { CONTROL_CENTER, FLOATING }
 
     [GtkTemplate (ui = "/org/erikreider/swaync/ui/notification.ui")]
-    public class Notification : Adw.Bin {
-        [GtkChild]
-        unowned Gtk.Revealer revealer;
+    public class Notification : Adw.Bin, Fadeable {
         [GtkChild]
         unowned DismissibleWidget dismissible_widget;
 
@@ -54,6 +52,20 @@ namespace SwayNotificationCenter {
 
         private bool default_action_down = false;
         private bool default_action_in = false;
+
+        /** The opacity of each FadeSource, multiplied together. See Fadeable */
+        private double[] fades = { 1.0, 1.0, 1.0, 1.0 };
+        /** Fades the notification in and out */
+        private Adw.TimedAnimation reveal_animation;
+        /** Animated by reveal_animation */
+        public double reveal_progress {
+            get {
+                return fades[(int) FadeSource.REVEAL];
+            }
+            set {
+                set_fade (FadeSource.REVEAL, value);
+            }
+        }
 
         private int notification_body_image_height {
             get;
@@ -212,6 +224,13 @@ namespace SwayNotificationCenter {
 
             this.transition_time = ConfigModel.instance.transition_time;
 
+            // Starts hidden until revealed in build_noti
+            reveal_progress = 0.0;
+            Adw.PropertyAnimationTarget reveal_target = new Adw.PropertyAnimationTarget (
+                this, "reveal-progress");
+            reveal_animation = new Adw.TimedAnimation (this, 0.0, 1.0,
+                                                       (uint) transition_time, reveal_target);
+
             ///
             /// Signals
             ///
@@ -243,9 +262,7 @@ namespace SwayNotificationCenter {
             // backdrop-filter on .notification keeps its blur region while swiping
             dismissible_widget.fade_child = false;
             dismissible_widget.notify["swipe-progress"].connect (() => {
-                double opacity = 1 - dismissible_widget.swipe_progress.abs ();
-                base_box.set_opacity (opacity);
-                close_button.set_opacity (opacity);
+                set_fade (FadeSource.SWIPE, 1 - dismissible_widget.swipe_progress.abs ());
             });
 
             Gtk.EventControllerKey reply_key_controller = new Gtk.EventControllerKey ();
@@ -283,7 +300,7 @@ namespace SwayNotificationCenter {
 
             close_button.set_transition_duration (this.transition_time);
 
-            this.revealer.set_transition_duration (this.transition_time);
+            reveal_animation.duration = (uint) this.transition_time;
 
             // Changes the swipe direction depending on the notifications X position
             switch (ConfigModel.instance.positionX) {
@@ -308,7 +325,9 @@ namespace SwayNotificationCenter {
             set_style_urgency ();
 
             Idle.add_once (() => {
-                revealer.set_reveal_child (true);
+                reveal_animation.value_from = reveal_progress;
+                reveal_animation.value_to = 1.0;
+                reveal_animation.play ();
             });
 
             remove_noti_timeout ();
@@ -679,16 +698,32 @@ namespace SwayNotificationCenter {
                     return;
                 }
                 remove_noti_timeout ();
-                if (animated && revealer.child_revealed) {
+                if (animated && reveal_progress >= 1.0) {
                     ulong id = 0;
-                    id = revealer.notify["child-revealed"].connect (() => {
-                        revealer.disconnect (id);
+                    id = reveal_animation.done.connect (() => {
+                        reveal_animation.disconnect (id);
                         remove_notification.callback ();
                     });
-                    revealer.set_reveal_child (false);
+                    reveal_animation.value_from = 1.0;
+                    reveal_animation.value_to = 0.0;
+                    reveal_animation.play ();
                     yield;
                 }
             }
+        }
+
+        /**
+         * Fades the card itself instead of an ancestor, so that a CSS
+         * backdrop-filter on .notification keeps its blur region.
+         */
+        public void set_fade (FadeSource source, double opacity) {
+            fades[(int) source] = opacity;
+            double total = 1.0;
+            foreach (double fade in fades) {
+                total *= fade;
+            }
+            base_box.set_opacity (total);
+            close_button.set_opacity (total);
         }
 
         public void replace_notification (NotifyParams new_params) {

@@ -172,8 +172,10 @@ public class AnimatedListItem : Gtk.Widget {
             return;
         }
 
-        // See DismissibleWidget.snapshot: avoid isolating the background at rest
-        bool fade = animation_child_fade && animation_value < 1.0;
+        // See DismissibleWidget.snapshot: avoid isolating the background at rest.
+        // Fadeable children fade themselves, see set_animation_value.
+        bool fade = animation_child_fade && animation_value < 1.0
+            && !(child is Fadeable);
         if (fade) {
             snapshot.push_opacity (animation_value);
         }
@@ -187,7 +189,22 @@ public class AnimatedListItem : Gtk.Widget {
 
     private void set_animation_value (double value) {
         animation_value = value;
+        if (animation_child_fade && child is Fadeable) {
+            ((Fadeable) child).set_fade (FadeSource.LIST_ITEM, double.max (value, 0.0));
+        }
         queue_resize ();
+    }
+
+    /**
+     * Sets the opacity of the item. Fadeable children apply it themselves to
+     * avoid an opacity node above them.
+     */
+    public void set_card_opacity (double opacity) {
+        if (child is Fadeable) {
+            ((Fadeable) child).set_fade (FadeSource.LIST_CARD, opacity);
+        } else {
+            set_opacity (opacity);
+        }
     }
 
     private inline void remove_animation_done_cb () {

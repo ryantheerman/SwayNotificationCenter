@@ -338,8 +338,8 @@ Then reload the CSS with `swaync-client -rs`.
 - Setting `opacity` below 1 on a parent of the blurred widget disables the blur
   for that widget. Note that the default stylesheet does this for collapsed
   notification groups while another group is expanded.
-- Blur stays at full strength while swiping a notification away (only the
-  content fades), but is not shown during the fade in/out animations.
+- Blur stays at full strength while a floating notification animates (slide
+  in/out, swipe to dismiss); only the content fades.
 
 ## Toggle Buttons
 

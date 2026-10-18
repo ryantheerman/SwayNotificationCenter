@@ -428,7 +428,7 @@ public class AnimatedList : Gtk.Widget, Gtk.Scrollable {
                  .translate (Graphene.Point ().init (x, y))
                  .scale (scale, scale);
             child.allocate (width, child_height, baseline, transform);
-            child.set_opacity (opacity);
+            child.set_card_opacity (opacity);
 
             index++;
         }

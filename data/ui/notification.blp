@@ -8,176 +8,170 @@ template $SwayNotificationCenterNotification: Adw.Bin {
     "notification-row",
   ]
 
-  Revealer revealer {
-    transition-type: crossfade;
-    reveal-child: false;
-    hexpand: true;
+  child: $DismissibleWidget dismissible_widget {
+    halign: fill;
+    valign: fill;
 
-    child: $DismissibleWidget dismissible_widget {
-      halign: fill;
-      valign: fill;
+    child: Overlay base_widget {
+      hexpand: true;
 
-      child: Overlay base_widget {
-        hexpand: true;
+      styles [
+        "notification-background",
+      ]
+
+      $IterBox base_box {
+        orientation: vertical;
+        overflow: hidden;
 
         styles [
-          "notification-background",
+          "notification",
         ]
 
-        $IterBox base_box {
+        Box default_action {
           orientation: vertical;
-          overflow: hidden;
 
           styles [
-            "notification",
+            "notification-default-action",
           ]
 
-          Box default_action {
+          Box {
             orientation: vertical;
+            spacing: 8;
 
             styles [
-              "notification-default-action",
+              "notification-content",
             ]
 
             Box {
-              orientation: vertical;
-              spacing: 8;
+              // Box with images/icons
+              Overlay {
+                halign: center;
+                valign: center;
 
-              styles [
-                "notification-content",
-              ]
-
-              Box {
-                // Box with images/icons
-                Overlay {
-                  halign: center;
+                child: Image img {
                   valign: center;
-
-                  child: Image img {
-                    valign: center;
-                    overflow: hidden;
-
-                    styles [
-                      "image",
-                    ]
-                  };
-
-                  [overlay]
-                  Image img_app_icon {
-                    halign: end;
-                    valign: end;
-                    overflow: hidden;
-
-                    styles [
-                      "app-icon",
-                    ]
-                  }
-                }
-
-                // Body, summary, and time
-                Box {
-                  hexpand: true;
-                  vexpand: true;
-                  valign: center;
-                  orientation: vertical;
+                  overflow: hidden;
 
                   styles [
-                    "text-box",
+                    "image",
                   ]
+                };
 
-                  Box {
-                    orientation: horizontal;
-                    valign: center;
+                [overlay]
+                Image img_app_icon {
+                  halign: end;
+                  valign: end;
+                  overflow: hidden;
 
-                    Label summary {
-                      justify: left;
-                      ellipsize: end;
-                      wrap: false;
-                      xalign: 0;
-                      hexpand: true;
+                  styles [
+                    "app-icon",
+                  ]
+                }
+              }
 
-                      styles [
-                        "summary",
-                      ]
-                    }
+              // Body, summary, and time
+              Box {
+                hexpand: true;
+                vexpand: true;
+                valign: center;
+                orientation: vertical;
 
-                    Label time {
-                      justify: left;
-                      ellipsize: none;
-                      valign: start;
+                styles [
+                  "text-box",
+                ]
 
-                      styles [
-                        "time",
-                      ]
-                    }
-                  }
+                Box {
+                  orientation: horizontal;
+                  valign: center;
 
-                  Label body {
-                    ellipsize: end;
+                  Label summary {
                     justify: left;
-                    wrap-mode: word_char;
-                    natural-wrap-mode: word;
-                    lines: 1;
+                    ellipsize: end;
+                    wrap: false;
                     xalign: 0;
-                    yalign: 0;
                     hexpand: true;
 
                     styles [
-                      "body",
+                      "summary",
+                    ]
+                  }
+
+                  Label time {
+                    justify: left;
+                    ellipsize: none;
+                    valign: start;
+
+                    styles [
+                      "time",
                     ]
                   }
                 }
-              }
 
-              ProgressBar progress_bar {
-                orientation: horizontal;
-              }
-
-              Picture body_image {
-                halign: center;
-                overflow: hidden;
-              }
-
-              Box inline_reply_box {
-                styles [
-                  "inline-reply",
-                ]
-
-                Entry inline_reply_entry {
-                  input-purpose: free_form;
-                  input-hints: spellcheck | emoji;
+                Label body {
+                  ellipsize: end;
+                  justify: left;
+                  wrap-mode: word_char;
+                  natural-wrap-mode: word;
+                  lines: 1;
+                  xalign: 0;
+                  yalign: 0;
                   hexpand: true;
 
                   styles [
-                    "inline-reply-entry",
-                  ]
-                }
-
-                Button inline_reply_button {
-                  styles [
-                    "inline-reply-button",
+                    "body",
                   ]
                 }
               }
             }
-          }
 
-          FlowBox alt_actions_box {
-            orientation: horizontal;
-            homogeneous: true;
-            overflow: hidden;
-            selection-mode: none;
-            activate-on-single-click: true;
+            ProgressBar progress_bar {
+              orientation: horizontal;
+            }
 
-            styles [
-              "notification-alt-actions",
-            ]
+            Picture body_image {
+              halign: center;
+              overflow: hidden;
+            }
+
+            Box inline_reply_box {
+              styles [
+                "inline-reply",
+              ]
+
+              Entry inline_reply_entry {
+                input-purpose: free_form;
+                input-hints: spellcheck | emoji;
+                hexpand: true;
+
+                styles [
+                  "inline-reply-entry",
+                ]
+              }
+
+              Button inline_reply_button {
+                styles [
+                  "inline-reply-button",
+                ]
+              }
+            }
           }
         }
 
-        [overlay]
-        $SwayNotificationCenterNotificationCloseButton close_button {}
-      };
+        FlowBox alt_actions_box {
+          orientation: horizontal;
+          homogeneous: true;
+          overflow: hidden;
+          selection-mode: none;
+          activate-on-single-click: true;
+
+          styles [
+            "notification-alt-actions",
+          ]
+        }
+      }
+
+      [overlay]
+      $SwayNotificationCenterNotificationCloseButton close_button {}
     };
-  }
+  };
 }
