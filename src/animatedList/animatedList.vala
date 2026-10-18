@@ -71,6 +71,8 @@ public class AnimatedList : Gtk.Widget, Gtk.Scrollable {
     public bool transition_children { get; construct set; }
     /** Whether or not the list should display its items in a stack or not */
     public bool use_card_animation { get; construct set; }
+    /** Fade items while animating and in the deck of cards effect */
+    public bool fade_children { get; set; default = true; }
     /** The direction that the items should flow in */
     public AnimatedListDirection direction { get; construct set; }
     /** Scroll to the latest item added to the list */
@@ -428,7 +430,7 @@ public class AnimatedList : Gtk.Widget, Gtk.Scrollable {
                  .translate (Graphene.Point ().init (x, y))
                  .scale (scale, scale);
             child.allocate (width, child_height, baseline, transform);
-            child.set_opacity (opacity);
+            child.set_opacity (fade_children ? opacity : 1.0f);
 
             index++;
         }
@@ -568,7 +570,7 @@ public class AnimatedList : Gtk.Widget, Gtk.Scrollable {
             item.animation_add_child_type = animation_add_child_type;
             item.animation_remove_reveal_type = animation_remove_reveal_type;
             item.animation_remove_child_type = animation_remove_child_type;
-            item.animation_child_fade = true;
+            item.animation_child_fade = fade_children;
 
             widget.unparent ();
             widget.set_parent (item);

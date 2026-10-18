@@ -13,6 +13,7 @@ namespace SwayNotificationCenter {
         }
         private AnimationValueTarget animation_target;
         private Adw.TimedAnimation animation;
+        private bool fade_animations = !ConfigModel.instance.blur_animations;
 
         public uint n_children { get; private set; }
         public List<unowned Gtk.Widget> visible_widgets = new List<unowned Gtk.Widget> ();
@@ -304,8 +305,10 @@ namespace SwayNotificationCenter {
                     // Apply a vertical offset to the notification
                     y += (int) Adw.lerp (COLLAPSED_NOTIFICATION_OFFSET, 0,
                                          animation_progress) * index;
-                } else {
+                } else if (fade_animations) {
                     opacity = (float) (1.5f * animation_progress);
+                } else {
+                    opacity = animation_progress > 0 ? 1.0f : 0.0f;
                 }
 
                 Gsk.Transform transform = new Gsk.Transform ()

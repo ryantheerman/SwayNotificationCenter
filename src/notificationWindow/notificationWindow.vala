@@ -153,6 +153,7 @@ namespace SwayNotificationCenter {
                 set_monitor (Functions.try_get_monitor (monitor_name));
             }
 
+            list.fade_children = !ConfigModel.instance.blur_animations;
             list.animation_add_reveal_type = AnimatedListItem.RevealAnimationType.SLIDE;
             list.animation_remove_reveal_type = AnimatedListItem.RevealAnimationType.SLIDE;
             list.animation_remove_child_type = AnimatedListItem.ChildAnimationType.NONE;

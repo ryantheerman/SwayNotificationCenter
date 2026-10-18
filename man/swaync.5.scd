@@ -156,6 +156,11 @@ config file to be able to detect config errors
 	default: 200 ++
 	description: The notification animation duration. 0 to disable
 
+*blur-animations* ++
+	type: bool ++
+	default: false ++
+	description: Disables fading in notification animations so that the CSS backdrop-filter blur is kept while animating. Only useful together with backdrop-filter in style.css
+
 *hide-on-clear* ++
 	type: bool ++
 	default: false ++

@@ -194,6 +194,11 @@
       "description": "The notification animation duration. 0 to disable",
       "default": 200
     },
+    "blur-animations": {
+      "type": "boolean",
+      "description": "Disables fading in notification animations so that the CSS backdrop-filter blur is kept while animating",
+      "default": false
+    },
     "hide-on-clear": {
       "type": "boolean",
       "description": "Hides the control center after pressing \"Clear All\"",

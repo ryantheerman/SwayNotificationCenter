@@ -597,6 +597,12 @@ namespace SwayNotificationCenter {
             }
         }
 
+        /**
+         * Disables the fading of notification animations. Fades remove the
+         * compositor blur set by CSS backdrop-filter while animating.
+         */
+        public bool blur_animations { get; set; default = false; }
+
         /*
          * Specifies if the control center should use keyboard shortcuts
          * and block keyboard input for other applications while open

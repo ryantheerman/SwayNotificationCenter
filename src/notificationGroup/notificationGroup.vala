@@ -35,6 +35,8 @@ namespace SwayNotificationCenter {
 
         private Gee.HashSet<uint32> urgent_notifications = new Gee.HashSet<uint32> ();
 
+        private bool fade_animations = !ConfigModel.instance.blur_animations;
+
         // Remove animation
         private AnimationValueTarget animation_target;
         private Adw.TimedAnimation remove_animation;
@@ -55,6 +57,7 @@ namespace SwayNotificationCenter {
             remove_animation.set_easing (Adw.Easing.EASE_IN_OUT_CUBIC);
 
             dismissible = new DismissibleWidget ();
+            dismissible.fade_child = fade_animations;
             dismissible.dismissed.connect (() => {
                 dismissed_by_swipe = true;
                 request_dismiss_all_notifications ();
@@ -253,7 +256,7 @@ namespace SwayNotificationCenter {
             }
 
             // See DismissibleWidget.snapshot: avoid isolating the background at rest
-            bool fade = animation_target.progress < 1.0;
+            bool fade = fade_animations && animation_target.progress < 1.0;
             if (fade) {
                 snapshot.push_opacity (animation_target.progress);
             }

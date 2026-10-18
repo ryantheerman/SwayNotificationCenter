@@ -338,8 +338,11 @@ Then reload the CSS with `swaync-client -rs`.
 - Setting `opacity` below 1 on a parent of the blurred widget disables the blur
   for that widget. Note that the default stylesheet does this for collapsed
   notification groups while another group is expanded.
-- Blur is not shown while a notification is animating (swipe to dismiss, fade
-  in/out).
+- By default, blur is not shown while a notification is fading (fade in/out,
+  swipe to dismiss). Set `"blur-animations": true` in the config to disable
+  these fades and keep the blur while animating. This option only makes sense
+  together with `backdrop-filter` in your `style.css`; without it, animations
+  will have neither fades nor blur.
 
 ## Toggle Buttons
 

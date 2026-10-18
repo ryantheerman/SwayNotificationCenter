@@ -55,6 +55,8 @@ namespace SwayNotificationCenter {
         private bool default_action_down = false;
         private bool default_action_in = false;
 
+        private bool fade_animations = !ConfigModel.instance.blur_animations;
+
         private int notification_body_image_height {
             get;
             default = ConfigModel.instance.notification_body_image_height;
@@ -233,6 +235,11 @@ namespace SwayNotificationCenter {
                 add_notification_timeout ();
             });
 
+
+            dismissible_widget.fade_child = fade_animations;
+            revealer.set_transition_type (fade_animations
+                ? Gtk.RevealerTransitionType.CROSSFADE
+                : Gtk.RevealerTransitionType.NONE);
 
             // Remove notification when it has been swiped
             dismissible_widget.dismissed.connect (() => {
@@ -663,7 +670,7 @@ namespace SwayNotificationCenter {
         // TODO: Inherit AnimatedListItem instead
         public async void remove_notification (bool animated) {
             // Disable animation when dismissed by swipe
-            animated &= !dismissed_by_swipe && get_mapped ();
+            animated &= !dismissed_by_swipe && get_mapped () && fade_animations;
             lock (dismissed) {
                 // The notification got replaced in-between dismissal and removal
                 if (!dismissed) {
